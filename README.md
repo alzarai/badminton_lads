@@ -1,1 +1,1 @@
-This is a program to detemine
+Making a change on GitHub.
