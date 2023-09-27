@@ -1,1 +1,1 @@
-Editing the readme on github
+Editing the readme on GITHUB
