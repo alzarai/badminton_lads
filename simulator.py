@@ -17,7 +17,6 @@ jun = np.array([10,5,0.96])
 #Defining the value of the weights for the traits, to be used in the match determiniation formula
 trait_weights = np.array([0.4,0.2,0.1])
 
-
 #Defining a function that returns the inverse of an input (0s -> 1s and vice versa)
 def inv_function(value):
     if (value == 0):
