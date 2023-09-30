@@ -19,3 +19,5 @@ Questions to refine project:
 1. Should noise probability (e=0.8) be independent of the pairing? (i.e Should matchups with much larger differences in opponents be less susceptible to upsets, compared to matchups with smaller differences in opponents)
 2. Should the final outcome be of data simulation be a matrix of total win probabilities (including noise) or include every single iteration of a match for each pairing. 
 3. Why do weights have to add up to 1?
+4. Make an excel file with the players, their attributes and the chemistry between them and import + manipulate to generate the rest of the data - which will then be saved to (another?) excel file that will be used by the predictor 
+5. The "true value of the probability" just tends towards the threshold we've set as we increase the number of simulations
