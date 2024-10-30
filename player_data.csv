@@ -1,5 +1,5 @@
-﻿Player,Skill,Athleticism,Height,Chemistry
-Mohamed,6,9,181,6
+﻿Player,Height, Weight, Age, Experience, Dominant_hand, Gender
+A,6,9,181,6
 Matt,6,10,175,9
 Nishant,8,7,183,10
 Everett,4,8,190,7
