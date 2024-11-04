@@ -17,6 +17,8 @@ where each feature from one player is compared to the feature of their opponent 
 
 It goes without saying that values close to 0.5 indicate a draw, values > 0.5 indicate more liklihood of a win and values < 0.5 indicate a probable loss.
 
+One function will be used to create the individual training player data, and then another will be used to generate the match (training) data
+
 
 (2) Training and Prediction. 
 
