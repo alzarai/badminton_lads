@@ -4,15 +4,10 @@
 #Importing required libs
 import pandas as pd
 from os import path
-import numpy as np
 import string
 import random
 #Defining the seed for random generator
 random.seed(42)
-
-#naming the file to save individual player data
-DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
-#player_data = pd.write_csv(path.join(DIR,'player_data.csv'))
 
 #Defining global features such total number of features, and the order they will appear in the data/file
 feature_options = ["Name","Height", "Weight", "Age", "Experience", "Dominant_hand", "Gender"]
@@ -38,24 +33,26 @@ def players_creator(number_of_players):
         for iterator2 in range(number_of_players):
             player_name = player_group + str(iterator2)
             player_height = random.randint(height_options[0],height_options[-1])
-            player_weight = random.randint(weight_options[0],height_options[-1])
-            player_age = random.randint(age_options[0],height_options[-1])
-            player_experience = random.randint(experience_options[0],height_options[-1])
+            player_weight = random.randint(weight_options[0],weight_options[-1])
+            player_age = random.randint(age_options[0],age_options[-1])
+            player_experience = random.randint(experience_options[0],experience_options[-1])
             #These two values have to be either or - we will keep them as labeled data and not numerical classifications (we will leave that part for the training)
             player_dominant_hand = random.choice(dominant_hand_options)
             player_gender = random.choice(gender_options)
 
-            player_stats = [player_height,player_weight,player_age,player_experience,player_dominant_hand,player_gender]
+            player_stats = [player_name,player_height,player_weight,player_age,player_experience,player_dominant_hand,player_gender]
             player_array.append(player_stats)
     
     return(player_array)
 
-
-
-
-
-
 #Defining the number of players in each class (i.e. A0 - A9, B1-B9, etc)
 number_of_players = 10
-print(len(players_creator(number_of_players)))
+player_data_for_file = players_creator(number_of_players)
 
+#Creating a DataFrame to store this data into a file
+df = pd.DataFrame(player_data_for_file, columns=feature_options)
+#Naming the file to save total player data
+DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
+file_path = path.join(DIR,'player_data.csv')
+
+df.to_csv(file_path,index="False")
