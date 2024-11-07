@@ -4,13 +4,32 @@
 #Importing required libs
 import pandas as pd
 from os import path
+import numpy as np
+from scipy.stats import norm
+
 
 '''import numpy as np
 def score_weight(weight, center=80, sigma=5):
     return np.exp(-((weight - center) ** 2) / (2 * sigma ** 2))'''
 
+#Defining the function that will calculate the influence height has on the overall score
+def height_influence(pl1_h,pl2_h):
+    #The influence via height will be calculated by assuming there is an ideal height, and heights on either side of that tail off via a normal distribution
+    #Defining the centralised height that I believe represents the ideal height of a player for this game (i.e. 190 cm)
+    height_centre = 190
+    height_sigma = 0.5
+    #Creation of a normal distribution# Create the normal distribution
+    height_distribution = norm(loc=height_centre, scale=height_sigma)
+    #Defining the "normalised" value of a given height in terms of this distribution
+    pl1_h_norm = height_distribution.pdf(pl1_h)
+    pl2_h_norm = height_distribution.pdf(pl2_h)
+    return([pl1_h_norm,pl2_h_norm])
+
+
 #Function that decides the probability that a certain player will beat their opponent, given the features of two players
 def match_win_probability(pl1,pl2):
+
+
     #Creating a comparison between the features, along with how important that feature is to the overall score
     
     #For height, the taller a player is the more likely to win.
@@ -48,9 +67,9 @@ def match_win_probability(pl1,pl2):
     #Writing the data to the file
     df.to_csv(file_path,index="False")
 
-pl1 = ['A0', 200, 57, 18, 8, 'left', 'male']
-pl2 = ['B0', 150, 56, 35, 2, 'right', 'male']
-match_win_probability(pl1,pl2)
-
+pl1 = ['A0', 191, 100, 18, 8, 'left', 'male']
+pl2 = ['D0', 141, 55, 35, 13, 'left', 'female']
+#match_win_probability(pl1,pl2)
+height_influence(pl1[1],pl2[1])
 
 
