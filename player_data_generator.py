@@ -1,5 +1,4 @@
-#This is the python script to work on the project on a more reduced level.
-#Aim is to read player data from a csv, apply a formula for winning/losing, and then saving this data into a file
+#Aim of the code is to generate individual player data and save it to a folder, that will then be used as  the basis to create the training data for the main project
 
 #Importing required libs
 import pandas as pd
@@ -43,10 +42,11 @@ def players_creator(number_of_players):
             player_stats = [player_name,player_height,player_weight,player_age,player_experience,player_dominant_hand,player_gender]
             player_array.append(player_stats)
     
+    print(player_array)
     return(player_array)
 
 #Defining the number of players in each class (i.e. A0 - A9, B1-B9, etc)
-number_of_players = 10
+number_of_players = 1
 player_data_for_file = players_creator(number_of_players)
 
 #Creating a DataFrame to store this data into a file
