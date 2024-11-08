@@ -60,7 +60,7 @@ def experience_influence(pl1_experience,pl2_experience):
 def historic_wins_influence(pl1_historic_wins,pl2_historic_wins):
     #The influence via historic wins will be calculated by taking the log of values and then finding their difference (finding log of division)
     #This is mostly just to introduce more relations for the model to play with than sums or products
-    historic_wins_factor = np.log(pl1_historic_wins/pl2_historic_wins)
+    historic_wins_factor = np.log10(pl1_historic_wins/pl2_historic_wins)
     return(historic_wins_factor)
 
 #Defining the function that will calculate the influence historic wins has on the overall score
@@ -75,6 +75,24 @@ def play_freq_influence(pl1_play_freq,pl2_play_freq):
     #Random formula just to kep making this example interesting. Can be be refined later
     reaction_time_factor = np.power(pl1_play_freq, (pl1_play_freq + 1 - pl2_play_freq))
     return(reaction_time_factor)
+
+#Defining the function that will calculate the influence athleticism  has on the overall score
+def athleticism_influence(pl1_athleticism,pl2_athleticism):
+    #Random formula just to kep making this example interesting. Can be be refined later
+    athleticism_factor = np.power(0.9,(1/(pl1_athleticism/pl2_athleticism)))
+    return(athleticism_factor)
+
+#Defining the function that will calculate the influence serve speed has on the overall score
+def serve_speed_influence(pl1_serve_speed,pl2_serve_speed):
+    #The influence that serve speed has on wins. Just copied the reaction time formula
+    serve_speed_factor = (pl1_serve_speed - pl2_serve_speed)/1000
+    return(serve_speed_factor)
+
+#Defining the function that will calculate the influence court coverage has on the overall score
+def court_coverage_influence(pl1_court_coverage,pl2_court_coverage):
+    #This time, the greater the value the worse off a player is; so we can use inverses.
+    court_coverage_factor = (1/pl1_court_coverage) -  (1/pl2_court_coverage)
+    return(court_coverage_factor)
 
 #Function that decides the probability that a certain player will beat their opponent, given the features of two players
 def match_win_probability(pl1,pl2):
@@ -99,7 +117,7 @@ def match_win_probability(pl1,pl2):
     age_impact = (age_factor*age_weight)
 
     #Computing the influence the experience will have on player 1's win using the dedicated function for it
-    experience_factor = age_influence(pl1[4],pl2[4])
+    experience_factor = experience_influence(pl1[4],pl2[4])
     #Experience impacts the likelihood of winning pretty highly so we will multiply it by 1x
     experience_weight = 1
     experience_impact = experience_factor * experience_weight
@@ -118,16 +136,37 @@ def match_win_probability(pl1,pl2):
     reaction_time_weight = 0.60
     reaction_time_impact = reaction_time_factor * reaction_time_weight
 
-    #Computing the play frequency has on player 1's win using the dedicated function for it
+    #Computing the influence play frequency has on player 1's win using the dedicated function for it
     play_freq_factor = play_freq_influence(pl1[9],pl2[9])
     #Historic wins is a mid level influence so lets give it 0.60
     play_freq_weight = 0.60
     play_freq_impact = play_freq_factor * play_freq_weight
 
+    #Computing the influence athleticism has on player 1's win using the dedicated function for it
+    athleticism_factor = athleticism_influence(pl1[10],pl2[10])
+    #Historic wins is a mid level influence so lets give it 0.93
+    athleticism_weight = 0.93
+    athleticism_impact = athleticism_factor * athleticism_weight
+
+    #Computing the influence the serve speed will have on player 1's win using the dedicated function for it
+    serv_speed_factor = serve_speed_influence(pl1[11],pl2[11])
+    #Historic wins is a mid level influence so lets give it 0.22
+    serve_speed_weight = 0.22
+    serve_speed_impact = serv_speed_factor * serve_speed_weight
+
+    #Computing the influence the serve speed will have on player 1's win using the dedicated function for it
+    court_coverage_factor = court_coverage_influence(pl1[12],pl2[12])
+    #Historic wins is a mid level influence so lets give it 0.45
+    court_coverage_weight = 0.45
+    serve_speed_impact = court_coverage_factor * court_coverage_weight
+
+    #Lets keep eye-sight redundant because we can assume that all players will play with corrected vision
 
     #Defining the final formula to decide a win or not
-    win_probability_array = [height_impact,weight_impact,age_impact,experience_impact,historic_wins_impact,reaction_time_impact, play_freq_impact]
+    win_probability_array = [height_impact,weight_impact,age_impact,experience_impact,historic_wins_impact,reaction_time_impact, play_freq_impact, athleticism_impact,
+                             serve_speed_impact,serve_speed_impact]
     win_probability = np.sum(win_probability_array)
+    print(win_probability)
 
     #Defining the data that will be stored in the match data file
     match_data_for_file = [[pl1[0],pl2[0],win_probability]]
@@ -140,12 +179,9 @@ def match_win_probability(pl1,pl2):
     #Writing the data to the file
     df.to_csv(file_path,index="False")
 
-pl1 = ['A0', 180, 57, 18, 8, 'left', 'male', 0.1395379285251439, 161.4971057029045, 0.7406677446676758, 5, 111.73877665258833, 18.43843639370541, '20/20']
-pl2 = ['B0', 145, 63, 25, 16, 'left', 'male', 0.7160196129224035, 520.7949841541415, 0.41951982096165874, 4, 121.78531367751818, 26.188609133556533, '20/20']
+pl1 = ['A0', 195, 57, 18, 8, 'left', 'male', 0.1395379285251439, 351.4971057029045, 0.7406677446676758, 11, 111.73877665258833, 18.43843639370541, '20/20']
+pl2 = ['B0', 185, 63, 37, 8, 'left', 'male', 0.7160196129224035, 520.7949841541415, 0.41951982096165874, 3, 121.78531367751818, 26.188609133556533, '20/20']
 
 #match_win_probability(pl1,pl2)
 match_win_probability(pl1,pl2)
-
-'''feature_options = ["Name","Height", "Weight", "Age", "Experience", "Dominant_hand", "Gender", "Historic Win Ratio", "Reaction Time",
-                   "Play Frequency", "Athleticism", "Serve Speed","Court Coverage", "Vision"]'''
-'''feature_options = ["Play Frequency", "Athleticism", "Serve Speed","Court Coverage", "Vision"]'''
+match_win_probability(pl2,pl1)
