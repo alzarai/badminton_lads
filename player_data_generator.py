@@ -19,8 +19,6 @@ age_options = [18,37]
 experience_options = [0,20]
 dominant_hand_options = ["left","right"]
 gender_options = ["male","female"]
-
-
 win_ratio_options = [0,1]
 reaction_time = [100,700]
 play_frequency_options = [0,1]
@@ -65,6 +63,7 @@ def players_creator(number_of_players):
             
             player_array.append(player_stats)
     return(player_array)
+    
 
 #Defining the number of players in each class (i.e. A0 - A9, B1-B9, etc)
 number_of_players = 10
@@ -75,5 +74,5 @@ df = pd.DataFrame(player_data_for_file, columns=feature_options)
 #Naming the file to save total player data
 DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
 file_path = path.join(DIR,'player_data.csv')
-
+#Wriitng the data to the specified file
 df.to_csv(file_path,index="False")
