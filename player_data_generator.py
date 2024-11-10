@@ -66,7 +66,7 @@ def players_creator(number_of_players):
     
 
 #Defining the number of players in each class (i.e. A0 - A9, B1-B9, etc)
-number_of_players = 10
+number_of_players = 7
 player_data_for_file = players_creator(number_of_players)
 
 #Creating a DataFrame to store this data into a file

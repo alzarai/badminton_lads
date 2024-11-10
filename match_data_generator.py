@@ -171,21 +171,16 @@ def match_win_probability(pl1,pl2):
                              serve_speed_impact,serve_speed_impact]
     #Defining the win as a sigmoid so we can get values between 0 and 1
     win_probability = 1 / (1 + np.exp(-np.sum(win_probability_array)))
-    print(win_probability)
 
     #Defining the data that will be stored in the match data file
-    match_data_for_file = [[pl1[0],pl2[0],win_probability]]
+    match_data_for_file = [pl1[0],pl2[0],win_probability]
+    return(match_data_for_file)
 
-    #Creating a DataFrame to store this data into a file
-    df = pd.DataFrame(match_data_for_file, columns=['Player 1','Player 2','Probability of Win for Player 1'])
-    #Naming the file to save total player data
-    DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
-    file_path = path.join(DIR,'match_data.csv')
-    #Writing the data to the file
-    df.to_csv(file_path, mode='a', index=False, header=False)
 
 #Function to compute the match data results from all current players
 def generate_data():
+    match_data = []
+
     #Defining the file to read all data from
     #Naming the file to save total player data
     DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
@@ -199,9 +194,18 @@ def generate_data():
             generated_player_information.append(row[1:])
     
     #Doing match calcs for all player combos
-    for player in range((len(generated_player_information)-1)):
-        pl1_generate = generated_player_information[player]
-        pl2_generate = generated_player_information[player+1]
-        match_win_probability(pl1_generate,pl2_generate)
+    for player1 in range(len(generated_player_information)):
+        pl1_generate = generated_player_information[player1]
+        for player2 in range((len(generated_player_information))):
+            pl2_generate = generated_player_information[player2]
+            match_data.append(match_win_probability(pl1_generate,pl2_generate))
+        
+    #Creating a DataFrame to store this data into a file
+    df = pd.DataFrame(match_data, columns=['Player 1','Player 2','Probability of Win for Player 1'])
+    #Naming the file to save total player data
+    DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
+    file_path = path.join(DIR,'match_data.csv')
+    #Writing the data to the file
+    df.to_csv(file_path, index=False)
 
 generate_data()
