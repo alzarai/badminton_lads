@@ -4,6 +4,7 @@
 #Importing required libs
 import pandas as pd
 from os import path
+import csv
 import numpy as np
 from scipy.stats import norm
 
@@ -30,8 +31,8 @@ def weight_influence(pl1_w,pl2_w):
     #Creation of a normal distribution
     height_distribution = norm(loc=weight_centre, scale=weight_sigma)
     #Defining the "normalised" value of a given height in terms of this distribution
-    pl1_w_norm = height_distribution.pdf(pl1_w)
-    pl2_w_norm = height_distribution.pdf(pl2_w)
+    pl1_w_norm = height_distribution.pdf(int(pl1_w))
+    pl2_w_norm = height_distribution.pdf(int(pl2_w))
     weight_factor = pl1_w_norm - pl2_w_norm
     return(weight_factor)
 
@@ -44,8 +45,8 @@ def age_influence(pl1_age,pl2_age):
     #Creation of a normal distribution
     age_distribution = norm(loc=age_centre, scale=age_sigma)
     #Defining the "normalised" value of a given height in terms of this distribution
-    pl1_age_norm = age_distribution.pdf(pl1_age)
-    pl2_age_norm = age_distribution.pdf(pl2_age)
+    pl1_age_norm = age_distribution.pdf(int(pl1_age))
+    pl2_age_norm = age_distribution.pdf(int(pl2_age))
     age_factor = pl1_age_norm - pl2_age_norm
     return(age_factor)
 
@@ -53,45 +54,45 @@ def age_influence(pl1_age,pl2_age):
 def experience_influence(pl1_experience,pl2_experience):
     #The influence via age will be calculated by taking the log of values and then finding their difference (finding log of division)
     #This is mostly just to introduce more relations for the model to play with than sums or products
-    experience_factor = np.log(pl1_experience/pl2_experience)
+    experience_factor = np.log(float(pl1_experience)/float(pl2_experience))
     return(experience_factor)
 
 #Defining the function that will calculate the influence historic wins has on the overall score
 def historic_wins_influence(pl1_historic_wins,pl2_historic_wins):
     #The influence via historic wins will be calculated by taking the log of values and then finding their difference (finding log of division)
     #This is mostly just to introduce more relations for the model to play with than sums or products
-    historic_wins_factor = np.log10(pl1_historic_wins/pl2_historic_wins)
+    historic_wins_factor = np.log10(float(pl1_historic_wins)/float(pl2_historic_wins))
     return(historic_wins_factor)
 
 #Defining the function that will calculate the influence historic wins has on the overall score
 def reaction_time_influence(pl1_reaction_time,pl2_reaction_time):
     #The influence via historic wins will be calculated by taking the log of values and then finding their difference (finding log of division)
     #This is mostly just to introduce more relations for the model to play with than sums or products
-    reaction_time_factor = (pl1_reaction_time - pl2_reaction_time)/1000
+    reaction_time_factor = (float(pl1_reaction_time) - float(pl2_reaction_time))/1000
     return(reaction_time_factor)
 
 #Defining the function that will calculate the influence play_frequency wins has on the overall score
 def play_freq_influence(pl1_play_freq,pl2_play_freq):
     #Random formula just to kep making this example interesting. Can be be refined later
-    reaction_time_factor = np.power(pl1_play_freq, (pl1_play_freq + 1 - pl2_play_freq))
+    reaction_time_factor = np.power(float(pl1_play_freq), (float(pl1_play_freq) + 1 - float(pl2_play_freq)))
     return(reaction_time_factor)
 
 #Defining the function that will calculate the influence athleticism  has on the overall score
 def athleticism_influence(pl1_athleticism,pl2_athleticism):
     #Random formula just to kep making this example interesting. Can be be refined later
-    athleticism_factor = np.power(0.9,(1/(pl1_athleticism/pl2_athleticism)))
+    athleticism_factor = np.power(0.9,(1/(int(pl1_athleticism)/int(pl2_athleticism))))
     return(athleticism_factor)
 
 #Defining the function that will calculate the influence serve speed has on the overall score
 def serve_speed_influence(pl1_serve_speed,pl2_serve_speed):
     #The influence that serve speed has on wins. Just copied the reaction time formula
-    serve_speed_factor = (pl1_serve_speed - pl2_serve_speed)/1000
+    serve_speed_factor = (float(pl1_serve_speed) - float(pl2_serve_speed))/1000
     return(serve_speed_factor)
 
 #Defining the function that will calculate the influence court coverage has on the overall score
 def court_coverage_influence(pl1_court_coverage,pl2_court_coverage):
     #This time, the greater the value the worse off a player is; so we can use inverses.
-    court_coverage_factor = (1/pl1_court_coverage) -  (1/pl2_court_coverage)
+    court_coverage_factor = (1/float(pl1_court_coverage)) -  (1/float(pl2_court_coverage))
     return(court_coverage_factor)
 
 #Function that decides the probability that a certain player will beat their opponent, given the features of two players
@@ -99,7 +100,7 @@ def match_win_probability(pl1,pl2):
     #Creating a comparison between the features, along with how important that feature is to the overall score
 
     #Computing the influence the height will have on player 1's win using the dedicated function for it
-    height_factor = height_influence(pl1[1],pl2[1])
+    height_factor = height_influence(int(pl1[1]),int(pl2[1]))
     #Height impacts the likelihood of winning pretty highly positive so we will make this difference 0.75x
     height_weight = 0.75
     height_impact = (height_factor*height_weight)
@@ -162,10 +163,14 @@ def match_win_probability(pl1,pl2):
 
     #Lets keep eye-sight redundant because we can assume that all players will play with corrected vision
 
+
+
+
     #Defining the final formula to decide a win or not
     win_probability_array = [height_impact,weight_impact,age_impact,experience_impact,historic_wins_impact,reaction_time_impact, play_freq_impact, athleticism_impact,
                              serve_speed_impact,serve_speed_impact]
-    win_probability = np.sum(win_probability_array)
+    #Defining the win as a sigmoid so we can get values between 0 and 1
+    win_probability = 1 / (1 + np.exp(-np.sum(win_probability_array)))
     print(win_probability)
 
     #Defining the data that will be stored in the match data file
@@ -177,11 +182,26 @@ def match_win_probability(pl1,pl2):
     DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
     file_path = path.join(DIR,'match_data.csv')
     #Writing the data to the file
-    df.to_csv(file_path,index="False")
+    df.to_csv(file_path, mode='a', index=False, header=False)
 
-pl1 = ['A0', 195, 57, 18, 8, 'left', 'male', 0.1395379285251439, 351.4971057029045, 0.7406677446676758, 11, 111.73877665258833, 18.43843639370541, '20/20']
-pl2 = ['B0', 185, 63, 37, 8, 'left', 'male', 0.7160196129224035, 520.7949841541415, 0.41951982096165874, 3, 121.78531367751818, 26.188609133556533, '20/20']
+#Function to compute the match data results from all current players
+def generate_data():
+    #Defining the file to read all data from
+    #Naming the file to save total player data
+    DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
+    file_path = path.join(DIR,'player_data.csv')
+    #Writing the information from file to array
+    generated_player_information = []
+    with open(file_path, mode='r') as file:
+        reader = csv.reader(file)
+        next(reader)
+        for row in reader:
+            generated_player_information.append(row[1:])
+    
+    #Doing match calcs for all player combos
+    for player in range((len(generated_player_information)-1)):
+        pl1_generate = generated_player_information[player]
+        pl2_generate = generated_player_information[player+1]
+        match_win_probability(pl1_generate,pl2_generate)
 
-#match_win_probability(pl1,pl2)
-match_win_probability(pl1,pl2)
-match_win_probability(pl2,pl1)
+generate_data()
