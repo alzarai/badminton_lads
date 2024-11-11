@@ -16,14 +16,15 @@ def define_training_data():
     file_path = path.join(DIR,'player_data.csv')
     with open(file_path, mode='r') as file:
         reader = csv.reader(file)
+        next(reader)
         reader = list(reader)
-        for row in range(1, len(reader), 1):  # Step by 2 for pairs
-            if row + 1 < len(reader):  # Ensure there’s a next row
-                #The 2 here ensures we are omitting the player name, as we dont want this to have an influence on training data
-                x_data.append(reader[row][1:] + reader[row + 1][1:])
+    for i in range(len(reader)):
+        for j in range(len(reader)):  # Pair with all rows from i to the last row
+            combined_row = reader[i][1:] + reader[j][1:]  # Skip the first column of each row
+            x_data.append(combined_row)
     x_data = np.array(x_data)   
     print(len(x_data))
-    print(x_data)
+    print(x_data[0],x_data[1],x_data[-1])
 define_training_data()
 
 
@@ -40,7 +41,7 @@ def define_training_list():
             y_row = float(row[2:][0])
             y_data.append(y_row)
         print(len(y_data)) 
-define_training_list()
+#define_training_list()
 
 #Defining the function that will build the neural network
 #def predictor():
