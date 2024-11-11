@@ -10,7 +10,7 @@ import csv
 #Defining the function that will generate the training data list form the files
 #For simplicity we will assume that the order of the training data is the same as the label data
 def define_training_data():
-    x_train = []
+    x_data = []
     #Reading from the file
     DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
     file_path = path.join(DIR,'player_data.csv')
@@ -20,15 +20,27 @@ def define_training_data():
         for row in range(1, len(reader), 1):  # Step by 2 for pairs
             if row + 1 < len(reader):  # Ensure there’s a next row
                 #The 2 here ensures we are omitting the player name, as we dont want this to have an influence on training data
-                x_train.append(reader[row][2:] + reader[row + 1][2:])
-    x_train_np = np.array(x_train)   
-    print(x_train)
-    
+                x_data.append(reader[row][1:] + reader[row + 1][1:])
+    x_data = np.array(x_data)   
+    print(len(x_data))
+    print(x_data)
 define_training_data()
 
 
 #Defining the function that will generate the training labels list form the files
-#def define_training_list():
+def define_training_list():
+    y_data=[]
+    #Reading from the file
+    DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
+    file_path = path.join(DIR,'match_data.csv')
+    with open(file_path, mode='r') as file:
+        reader=csv.reader(file)
+        next(reader)
+        for row in reader:
+            y_row = float(row[2:][0])
+            y_data.append(y_row)
+        print(len(y_data)) 
+define_training_list()
 
 #Defining the function that will build the neural network
 #def predictor():
