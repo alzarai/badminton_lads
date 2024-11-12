@@ -45,7 +45,7 @@ def define_training_data():
 
     #converting all training values to float to be fed into the neural network
     x_data = x_data.astype(float)
-    #return(x_data)
+    return(x_data)
 define_training_data()
 
 #Defining the function that will generate the training labels list form the files
@@ -68,18 +68,20 @@ def predictor():
     #Getting training data and labels
     x_data = np.array(define_training_data())
     y_data = np.array(define_training_list())
+    print(x_data.shape)
     #Creating the NN
     model = keras.Sequential([
-        keras.layers.Input(shape=(len(x_data),)),
+        keras.layers.Input(shape=(x_data.shape[-1],)),
         keras.layers.Dense(25,activation='relu'),
         keras.layers.Dense(15,activation='relu'),
         keras.layers.Dense(1,activation='linear')
     ])
     model.compile(optimizer='adam',loss='mse')
     model.fit(x_data,y_data,epochs=100)
+    return(model)
 
-predictor()
-
+my_first_model = predictor()
+my_first_model.summary()
 
 #Defining the function that will determine the accuracy of our model, by comparing its evaluation against a new set of player data that will be created using the original formula
 #def accuracy_determinator():
