@@ -173,17 +173,18 @@ def match_win_probability(pl1,pl2):
     win_probability = 1 / (1 + np.exp(-np.sum(win_probability_array)))
 
     #Defining the data that will be stored in the match data file
-    match_data_for_file = [pl1[0],pl2[0],win_probability]
-    return(match_data_for_file)
+    match_data_for_regression_file = win_probability
+    return(match_data_for_regression_file)
 
 
 #Function to compute the match data results from all current players
 def generate_data():
-    match_data = []
+    match_data_for_regression = []
+    match_data_for_classification = []
 
     #Defining the file to read all data from
     #Naming the file to save total player data
-    DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
+    DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads/Data Files (CSV)'
     file_path = path.join(DIR,'player_data.csv')
     #Writing the information from file to array
     generated_player_information = []
@@ -198,14 +199,31 @@ def generate_data():
         pl1_generate = generated_player_information[player1]
         for player2 in range((len(generated_player_information))):
             pl2_generate = generated_player_information[player2]
-            match_data.append(match_win_probability(pl1_generate,pl2_generate))
-        
-    #Creating a DataFrame to store this data into a file
-    df = pd.DataFrame(match_data, columns=['Player 1','Player 2','Probability of Win for Player 1'])
+            match_win_probss = match_win_probability(pl1_generate,pl2_generate)
+            if(pl1_generate[0]==pl2_generate[0]):
+                pass
+            else:
+                match_data_for_regression.append([pl1_generate[0],pl2_generate[0],match_win_probss])
+                if(match_win_probability(pl1_generate,pl2_generate)) > match_win_probability(pl2_generate,pl1_generate):
+                    prob_1_wins = 1
+                else:
+                    prob_1_wins = 0
+                match_data_for_classification.append([pl1_generate[0],pl2_generate[0],prob_1_wins])
+
+    #Creating a DataFrame to store the regression data into a file
+    df_regression = pd.DataFrame(match_data_for_regression, columns=['Player 1','Player 2','Probability of Win for Player 1'])
     #Naming the file to save total player data
-    DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads'
-    file_path = path.join(DIR,'match_data.csv')
+    DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads/Data Files (CSV)'
+    file_path = path.join(DIR,'match_data_regression.csv')
     #Writing the data to the file
-    df.to_csv(file_path, index=False)
+    df_regression.to_csv(file_path, index=False)
+        
+    #Creating a DataFrame to store the classification data into a file
+    df_classification = pd.DataFrame(match_data_for_classification, columns=['Player 1','Player 2','Win/Loss for Player 1'])
+    #Naming the file to save total player data
+    DIR = '/Users/mohamed.alzarai/Desktop/Git/badminton_lads/Data Files (CSV)'
+    file_path = path.join(DIR,'match_data_classification.csv')
+    #Writing the data to the file
+    df_classification.to_csv(file_path, index=False)
 
 generate_data()
