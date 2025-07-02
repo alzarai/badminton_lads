@@ -170,7 +170,7 @@ def match_win_probability(pl1,pl2):
     win_probability_array = [height_impact,weight_impact,age_impact,experience_impact,historic_wins_impact,reaction_time_impact, play_freq_impact, athleticism_impact,
                              serve_speed_impact,serve_speed_impact]
     #Defining the win as a sigmoid so we can get values between 0 and 1
-    win_probability = 1 / (1 + np.exp(-np.sum(win_probability_array)))
+    win_probability = np.sum(win_probability_array)
 
     #Defining the data that will be stored in the match data file
     match_data_for_regression_file = win_probability
